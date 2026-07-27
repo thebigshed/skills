@@ -123,14 +123,6 @@ generic instantiations: a library-level `package P is new G (...);` defaults to
 per-unit warnings. See [gnatprove.md](references/gnatprove/gnatprove.md) §
 "absence of error or check messages".
 
-Same trap at subprogram level: `--limit-subp` covers a nested subprogram only if
-it is *inlined* (contextual analysis). One **with** a contract (`Pre`, `Post`,
-`Global`, `Depends`, `Contract_Cases`) is always its own target — enumerate
-those and give each its own run. **Without** a contract you cannot tell from the
-source (recursion and other conditions also block inlining). The message
-`info: analyzing call to "X" in context` is printed when inlining succeeds for
-a call.
-
 ## Use Cases
 
 There are three broad use cases for this skill.
