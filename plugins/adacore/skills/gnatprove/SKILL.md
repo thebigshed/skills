@@ -68,7 +68,9 @@ Common arguments:
   3 or 4 without user approval)
 - `--limit-subp=file.adb:NN` (prove one subprogram; NN = **declaration** line,
   not body. Line numbers shift after any edit; always confirm you have the
-  right `NN`)
+  right `NN`.) Covers a nested subprogram only if that one is inlined; one with
+  a contract is always its own target. See
+  [command-reference.md § Scoping](references/gnatprove/command-reference.md#scoping).
 - `--limit-line=file.adb:MM` (prove exactly one check; assumes assertions
   above. Line numbers shift after any edit; always confirm you have the right
   `MM`)
@@ -120,6 +122,14 @@ generic instantiations: a library-level `package P is new G (...);` defaults to
 `with SPARK_Mode => On;` to it. Run scoped to the unit (`-u file`) to surface
 per-unit warnings. See [gnatprove.md](references/gnatprove/gnatprove.md) §
 "absence of error or check messages".
+
+Same trap at subprogram level: `--limit-subp` covers a nested subprogram only if
+it is *inlined* (contextual analysis). One **with** a contract (`Pre`, `Post`,
+`Global`, `Depends`, `Contract_Cases`) is always its own target — enumerate
+those and give each its own run. **Without** a contract you cannot tell from the
+source (recursion and other conditions also block inlining). The message
+`info: analyzing call to "X" in context` is printed when inlining succeeds for
+a call.
 
 ## Use Cases
 
