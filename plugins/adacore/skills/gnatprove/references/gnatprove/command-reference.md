@@ -60,6 +60,25 @@ not the `Post =>` or comment line. Targeting the conjunct line typically yields
 a misleading "success" that does not mean the conjunct proved. See
 [../proof/proof-debugging.md § Conjunct lines in a Post are not check lines](../proof/proof-debugging.md#conjunct-lines-in-a-post-are-not-check-lines--do-not-target-them).
 
+### `--limit-subp` and nested subprograms
+
+Covers a nested subprogram only if that one is **inlined** (contextual analysis,
+UG § *Contextual Analysis of Subprograms Without Contracts*); otherwise it is its
+own proof target and the enclosing run merely assumes its contract.
+
+- **With a contract** (`Pre`, `Post`, `Global`, `Depends`, `Contract_Cases`):
+  always its own target. Enumerating these and giving each its own
+  `--limit-subp` at its own declaration line establishes coverage.
+- **Without a contract**: not decidable from the source — recursion, deep-typed
+  parameters, nested declarations, calls in an assertion or a potentially
+  unevaluated context, etc. also block inlining. Get the truth by analyzing
+  the caller: `info: analyzing call to "X" in context` = folded into caller,
+  otherwise = its own target. `--info` gives the reason inlining was refused.
+
+A nested subprogram's absence from a `--limit-subp` run is uninformative — an
+inlined one and a separate target that the run simply did not select look
+identical. `--no-inlining` makes every local subprogram its own target.
+
 ## Output Control
 
 | Flag | Effect |

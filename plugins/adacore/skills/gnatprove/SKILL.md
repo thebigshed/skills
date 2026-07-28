@@ -68,7 +68,9 @@ Common arguments:
   3 or 4 without user approval)
 - `--limit-subp=file.adb:NN` (prove one subprogram; NN = **declaration** line,
   not body. Line numbers shift after any edit; always confirm you have the
-  right `NN`)
+  right `NN`.) Covers a nested subprogram only if that one is inlined; one with
+  a contract is always its own target. See
+  [command-reference.md § Scoping](references/gnatprove/command-reference.md#scoping).
 - `--limit-line=file.adb:MM` (prove exactly one check; assumes assertions
   above. Line numbers shift after any edit; always confirm you have the right
   `MM`)
