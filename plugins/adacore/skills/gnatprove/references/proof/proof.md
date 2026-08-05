@@ -72,3 +72,4 @@ antipatterns.
 | [refactoring-for-proof.md](refactoring-for-proof.md) | When and how to decompose subprograms to improve provability |
 | [overflow-patterns.md](overflow-patterns.md) | Integer overflow; intermediate value proofs |
 | [floating-point.md](floating-point.md) | FP proof strategies; nonlinear arithmetic |
+| [proof-in-ci.md](proof-in-ci.md) | Running gnatprove in CI: caching and provisioning prior to proof |

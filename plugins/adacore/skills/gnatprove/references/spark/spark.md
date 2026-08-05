@@ -21,6 +21,16 @@ not facts the body "obviously" establishes. If the body knows something
 callers need, the `Post` must say it. If the body needs something from the
 caller, the `Pre` must require it.
 
+**Assume-guarantee.** Who proves and who assumes is fixed. At a call
+`Foo → Bar`, `Foo` *proves* `Bar`'s precondition and *assumes* its
+postcondition; `Bar` *assumes* its precondition and *proves* its
+postcondition. So a `Pre` is an obligation discharged by the caller and relied
+on by the body, and a `Post` is an obligation discharged by the body and relied
+on by the caller. This assume-guarantee split is the foundation of deductive
+verification — and it is what makes a foreign (non-SPARK) callee a special
+case: with no SPARK body, its `Post` is only ever *assumed*, never proved (see
+[ffi.md](ffi.md)).
+
 The only exceptions are expression functions declared in the spec (their
 body expression becomes an implicit `Post`, so it *is* carried in the
 contract, just generated automatically) and subprograms annotated with
@@ -64,7 +74,7 @@ calling, often from type bounds, earlier checks, or loop conditions.
 
 | What | Why not |
 |------|---------|
-| `SPARK_Mode (Off)` on a body | The body is entirely unverified — not a workaround, giving up. Most operations that *seem* unverifiable are not; heap-mutating operations are the rare genuine exception. |
+| `SPARK_Mode (Off)` on a body | The body is entirely unverified — not a workaround, giving up. Most operations that *seem* unverifiable are not; genuine exceptions are narrow (heap-mutating operations, or an unverifiable leaf — a wall-clock read, a cryptographic hash, raw disk I/O — isolated behind an in-SPARK spec so callers stay proved). Whether a given case truly qualifies is a decision to reach **with the user**, never on your own: until this skill is exhaustive, there may always be a `SPARK_Mode => On` technique you do not yet know. |
 | Value clamps (e.g. `X := T'Min(X, MAX)`) | Silently changes behavior for out-of-range inputs. Creates dead code unreachable in testing — anathema in certification work. Use subtypes or preconditions to push the constraint to the caller instead. |
 
 ## Reference Files
@@ -74,4 +84,7 @@ calling, often from type bounds, earlier checks, or loop conditions.
 | [contracts.md](contracts.md) | `Pre`, `Post`, `Global`, `Depends`, `Contract_Cases`; frame postconditions; the clamping anti-pattern |
 | [ghost-code-and-lemmas.md](ghost-code-and-lemmas.md) | Ghost variables and functions; `pragma Assert`; lemmas vs. axioms; hint strength ordering |
 | [access-types.md](access-types.md) | Ownership model; borrowers and observers; null exclusion; allocators |
+| [package-state.md](package-state.md) | Package-internal state, including **Singletons**: hosting unique global data behind an interface; threading its usage protocol through preconditions; when ownership forces a parameter instead |
 | [idioms.md](idioms.md) | Expression-level idioms: unnecessary conversions and other Ada writing hygiene |
+| [ffi.md](ffi.md) | Modelling state across a C/Rust boundary: `Abstract_State with External`; why a value reader over mutable far-side state needs `Volatile_Function`, not a silently-unsound `Global => null`; where the C imports live (spec-only child); why FFI warnings are load-bearing |
+| [ownership-and-reclamation.md](ownership-and-reclamation.md) | Putting a resource private type under ownership (`Needs_Reclamation` / `Is_Reclaimed`) so a leak is a proof failure; the `System.Address`-isn't-ownable gotcha and the shadow access token; the reclaim finalizer's `Depends` |

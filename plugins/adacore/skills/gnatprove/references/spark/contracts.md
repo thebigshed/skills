@@ -32,6 +32,30 @@ assumes **any** field could change. Callers lose all knowledge about unmodified 
 Fix: add `Post => R.Field = R.Field'Old` for every unmodified field. GNATprove
 proves this trivially from the body.
 
+### Dependency clauses
+
+`Depends` maps each output to the inputs its final value derives from. Beyond
+the basic `A => B` (A comes from B):
+
+- **`A =>+ B`** — A derives from its own previous value *as well as* B. The `+`
+  folds `A` into the input list; `A =>+ B` is shorthand for `A => (A, B)`.
+- **`A => null`** — A's final value derives from *no* input: it is set to a
+  constant, not computed from anything that flowed in.
+- **`null => B`** — B is *consumed*: it flows to no output. This is how you tell
+  flow analysis that an input's incoming value legitimately goes nowhere.
+
+The last two pair up in a routine that resets an object and discards what it
+held — e.g. reclaiming a handle and leaving it null:
+
+```ada
+procedure Free_List (L : in out List_Acc) with
+  Depends => (L => null,    --  L's new value is a constant (null), from no input
+              null => L);   --  L's old value is consumed: it flows to no output
+```
+
+Without `null => L`, flow analysis expects the outgoing value of `L` to be
+used; this dependency specifies that this value has no interest.
+
 ### Types over contracts
 
 If the same range constraint appears across multiple subprograms, encode it in
@@ -105,6 +129,10 @@ procedure P with
 procedure Q with
   Depends => (Y => X, Total =>+ Incr);
 ```
+
+When a `Global`/`Depends` names hidden package state rather than a variable, that
+name is an `Abstract_State` — see
+[package-state.md § Naming hidden state in contracts](package-state.md).
 
 ### Frame postcondition
 

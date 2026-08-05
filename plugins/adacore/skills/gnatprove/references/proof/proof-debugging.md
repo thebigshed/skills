@@ -235,7 +235,9 @@ GNATprove messages fall into four categories:
 - **Warnings**: Suspicious situations (unused variables, potentially
   missing precondition hints, etc.). Treat as errors during a proof
   campaign — consider `--warnings=error` so they stop the run rather
-  than getting lost in the noise.
+  than getting lost in the noise. A flow warning on a call that bottoms
+  out in foreign code is a special case: it often signals an unsound
+  external-state model, not noise — see [ffi.md](../spark/ffi.md).
 - **Check messages**: Unproved checks, tagged with a **confidence**
   level (`low` / `medium` / `high`) — see next section. All must be
   addressed.
