@@ -156,6 +156,10 @@ begin
 end;
 ```
 
+The `(null => L)` is what silences the warning about unused value; the
+`(L => null)` part is required to complete the contract. See
+[contracts.md § Dependency clauses](contracts.md).
+
 ### Ownership transfer (move)
 
 ```ada
