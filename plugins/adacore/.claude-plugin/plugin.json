@@ -1,7 +1,7 @@
 {
   "name": "adacore",
-  "version": "0.3.0",
-  "description": "AdaCore agent skills for Ada and SPARK development: Alire (package management), GNATprove (SPARK formal verification), GNATfuzz (coverage-guided fuzzing), GNATtest (unit testing), and GNATdoc (documentation generation).",
+  "version": "0.4.0",
+  "description": "AdaCore agent skills for Ada and SPARK development: Alire (package management), GNATprove (SPARK formal verification), GNATfuzz (coverage-guided fuzzing), GNATtest (unit testing), GNATdoc (documentation generation), and GNATmetric (code metrics: complexity, size, coupling).",
   "author": {
     "name": "AdaCore",
     "email": "support@adacore.com"
